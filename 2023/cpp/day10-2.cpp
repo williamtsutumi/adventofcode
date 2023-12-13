@@ -18,6 +18,15 @@ typedef long long ll;
 typedef complex<ll> P;
 const ll INF = 1e9 + 7;
 
+/*
+ *   F7
+ * F-JL7
+ * L7.FJ
+ *  L7|
+ *   LJ
+ *
+ */
+
 vector<vector<bool>> visited;
 
 enum Direction {
