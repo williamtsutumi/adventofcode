@@ -18,6 +18,8 @@ typedef long long ll;
 typedef complex<ll> P;
 const ll INF = 1e9 + 7;
 
+ll dp[50][200][200];
+
 deque<int> split(string str, char separator){
     deque<int> out;
     string elem;
@@ -34,37 +36,50 @@ deque<int> split(string str, char separator){
     return out;
 }
 
-ll solve(string in, deque<int> values, int idx, int count){
-    if (values.size() == 0) return 1;
-    if (idx == in.size()){
-        if (values.size() == 1 && values[0] == count) return 1;
-        else return 0;
+ll solve(string &in, deque<int> values, int idx, int count){
+    ll out;
+    if (values.size() == 0){
+        dp[values.size()][idx][count] = 1;
+        return 1;
     }
 
+    if (idx == in.size()){
+        if (values.size() == 1 && values[0] == count) out = 1;
+        else out = 0;
+
+        dp[values.size()][idx][count] = out;
+        return out;
+    }
+
+    if (dp[values.size()][idx][count] != -1) return dp[values.size()][idx][count];
+
     if (in[idx] == '#'){
-        return solve(in, values, idx+1, count+1);
+        out = solve(in, values, idx+1, count+1);
     }
     else if (in[idx] == '.'){
         if (count != 0){
-            if (count != values[0]) return 0;
+            if (count != values[0]) {
+                dp[values.size()][idx][count] = 0;
+                return 0;
+            }
             values.pop_front();
         }
-        return solve(in, values, idx+1, 0);
+        out = solve(in, values, idx+1, 0);
     }
     else if (in[idx] == '?'){
         if (count == values[0]){
             values.pop_front();
-            return solve(in, values, idx+1, 0);
+            out = solve(in, values, idx+1, 0);
         }
         else if (count == 0){
-            return solve(in, values, idx+1, 0) + solve(in, values, idx+1, count+1);
+            out = solve(in, values, idx+1, 0) + solve(in, values, idx+1, count+1);
         }
         else{
-            return solve(in, values, idx+1, count+1);
+            out = solve(in, values, idx+1, count+1);
         }
     }
-    cout << "deu ruim" << endl;
-    return -1;
+    dp[values.size()][idx][count] = out;
+    return out;
 }
 
 int main()
@@ -102,19 +117,11 @@ int main()
         int sum = 0;
         for (int j=0; j<nums.size(); j++) sum += nums[j];
 
-        int currSum = 0;
-        for (int j=0; j<s.size(); j++){
-            if (s[j] == '#') currSum++;
-        } 
-
-        int valMax = 0;
-        for (int j=0; j<nums.size(); j++){
-            valMax = max(valMax, nums[j]);
-        }
-
         int firstIdx = 0;
         while (s[firstIdx] == '.') firstIdx++;
         string aux = s.substr(firstIdx, s.size()-firstIdx);
+
+        memset(dp, -1, sizeof(dp));
         out += solve(aux, nums, 0, 0);
         debug(out);
     }
