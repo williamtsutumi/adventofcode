@@ -98,7 +98,8 @@ int main()
         debug(out);
     }
     debug(mp);
-    // 103445 idk why
+    // 103445 -> it repeats every 59 cycles. 103445 first appears on cycle 150
+    // (1.000.000.000 - 150) mod 59 == 0, which then comes the result
 
 
     return 0;

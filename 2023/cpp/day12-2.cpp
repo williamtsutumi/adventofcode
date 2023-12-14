@@ -18,8 +18,6 @@ typedef long long ll;
 typedef complex<ll> P;
 const ll INF = 1e9 + 7;
 
-ll dp[50][200][200];
-
 deque<int> split(string str, char separator){
     deque<int> out;
     string elem;
@@ -36,14 +34,17 @@ deque<int> split(string str, char separator){
     return out;
 }
 
-ll solve(string &in, deque<int> values, int idx, int count){
+string solveIn;
+ll dp[50][200][200];
+
+ll solve(deque<int> values, int idx, int count){
     ll out;
     if (values.size() == 0){
         dp[values.size()][idx][count] = 1;
         return 1;
     }
 
-    if (idx == in.size()){
+    if (idx == solveIn.size()){
         if (values.size() == 1 && values[0] == count) out = 1;
         else out = 0;
 
@@ -51,12 +52,10 @@ ll solve(string &in, deque<int> values, int idx, int count){
         return out;
     }
 
-    if (dp[values.size()][idx][count] != -1) return dp[values.size()][idx][count];
-
-    if (in[idx] == '#'){
-        out = solve(in, values, idx+1, count+1);
+    if (solveIn[idx] == '#'){
+        out = solve(values, idx+1, count+1);
     }
-    else if (in[idx] == '.'){
+    else if (solveIn[idx] == '.'){
         if (count != 0){
             if (count != values[0]) {
                 dp[values.size()][idx][count] = 0;
@@ -64,18 +63,19 @@ ll solve(string &in, deque<int> values, int idx, int count){
             }
             values.pop_front();
         }
-        out = solve(in, values, idx+1, 0);
+        out = solve(values, idx+1, 0);
     }
-    else if (in[idx] == '?'){
+    else if (solveIn[idx] == '?'){
         if (count == values[0]){
             values.pop_front();
-            out = solve(in, values, idx+1, 0);
+            out = solve(values, idx+1, 0);
         }
         else if (count == 0){
-            out = solve(in, values, idx+1, 0) + solve(in, values, idx+1, count+1);
+            //if (dp[values.size()][idx][count] != -1) return dp[values.size()][idx][count];
+            out = solve(values, idx+1, 0) + solve(values, idx+1, count+1);
         }
         else{
-            out = solve(in, values, idx+1, count+1);
+            out = solve(values, idx+1, count+1);
         }
     }
     dp[values.size()][idx][count] = out;
@@ -111,21 +111,13 @@ int main()
     }
     ll out = 0;
     for (int i=0; i<in.size(); i++){
-        string s = in[i];
+        solveIn = in[i];
         deque<int> nums = values[i];
 
-        int sum = 0;
-        for (int j=0; j<nums.size(); j++) sum += nums[j];
-
-        int firstIdx = 0;
-        while (s[firstIdx] == '.') firstIdx++;
-        string aux = s.substr(firstIdx, s.size()-firstIdx);
-
         memset(dp, -1, sizeof(dp));
-        out += solve(aux, nums, 0, 0);
+        out += solve(nums, 0, 0);
         debug(out);
     }
-    debug(out);
 
     return 0;
 }
