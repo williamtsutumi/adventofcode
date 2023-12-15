@@ -71,7 +71,7 @@ ll solve(deque<int> values, int idx, int count){
             out = solve(values, idx+1, 0);
         }
         else if (count == 0){
-            //if (dp[values.size()][idx][count] != -1) return dp[values.size()][idx][count];
+            if (dp[values.size()][idx][count] != -1) return dp[values.size()][idx][count];
             out = solve(values, idx+1, 0) + solve(values, idx+1, count+1);
         }
         else{
